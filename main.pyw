@@ -4,6 +4,7 @@ import pygame
 import keyboard
 import pyperclip
 import win32gui
+import win32con
 import pyautogui
 import math
 
@@ -44,7 +45,7 @@ def front(win_name):
             while (hantei is not True) and hantei < 50:
                 try:
                     win32gui.ShowWindow(i[0], 5)
-                    win32gui.SetForegroundWindow(i[0])
+                    win32gui.SetWindowPos(i[0], win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
                     hantei = True
                 except:
                     time.sleep(0.1)
