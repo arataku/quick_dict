@@ -68,6 +68,7 @@ def dict_window(text1_, text2_, position):
     quited = None
     while quited is None:
         screen.fill((250, 250, 250))
+        screen.fill((150, 150, 250), (0, 0, 400, 50))
         screen.blit(text1, (10, 10))
         for i, value in enumerate(text2):
             screen.blit(value, (10, 60 + 30 * i))
