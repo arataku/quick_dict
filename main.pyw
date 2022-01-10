@@ -41,7 +41,7 @@ def front(win_name):
     for i in windows:
         if i[1] == win_name:
             hantei = 0
-            while (hantei is not True) and hantei < 100:
+            while (hantei is not True) and hantei < 50:
                 try:
                     win32gui.ShowWindow(i[0], 5)
                     win32gui.SetForegroundWindow(i[0])
@@ -57,25 +57,24 @@ def dict_window(text1_, text2_, position):
     pygame.init()
     os.environ["SDL_VIDEO_WINDOW_POS"] = str(position[0] - 5) + ", " + str(position[1] - 5)
     pygame.display.set_caption("quick_dict")
-    font = pygame.font.Font("font\SourceHanSansJP-Medium.otf", 20)
-    text1 = font.render(text1_, True, (5, 5, 5))
-    splitted = split_by_length(text2_, 20)
+    font1 = pygame.font.Font("font\SourceHanSansJP-Medium.otf", 18)
+    font2 = pygame.font.Font("font\SourceHanSansJP-Medium.otf", 14)
+    text1 = font1.render(text1_, True, (250, 250, 250))
+    splitted = split_by_length(text2_, 30)
     text2 = []
     for i in splitted:
-        text2.append(font.render(i, True, (5, 5, 5)))
-    screen = pygame.display.set_mode((400, 75 + 30 * len(splitted)), pygame.NOFRAME)
+        text2.append(font2.render(i, True, (20, 20, 20)))
+    screen = pygame.display.set_mode((400, 75 + 20 * len(splitted)), pygame.NOFRAME)
     front("quick_dict")
     quited = None
     while quited is None:
         screen.fill((250, 250, 250))
-        screen.fill((150, 150, 250), (0, 0, 400, 50))
+        screen.fill((60, 60, 60), (0, 0, 400, 40))
         screen.blit(text1, (10, 10))
         for i, value in enumerate(text2):
-            screen.blit(value, (10, 60 + 30 * i))
+            screen.blit(value, (10, 60 + 20 * i))
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                pygame.quit()
-                quited = True
+            pass
         try:
             if not pygame.mouse.get_focused():
                 un_focused_count += 1
