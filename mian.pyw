@@ -4,8 +4,8 @@ import pygame
 import keyboard
 import pyperclip
 import win32gui
-import copy
 import pyautogui
+import math
 
 
 class Search:
@@ -27,6 +27,10 @@ class Search:
             return "Not Found"
 
 
+def split_by_length(txt, length):
+    return [txt[i * length:(i + 1) * length] for i in range(math.ceil(len(txt) / length))]
+
+
 def windowEnumerationHandler(hwnd, windows):
     windows.append((hwnd, win32gui.GetWindowText(hwnd)))
 
@@ -36,14 +40,15 @@ def front(win_name):
     win32gui.EnumWindows(windowEnumerationHandler, windows)
     for i in windows:
         if i[1] == win_name:
-            hantei = False
-            while not hantei:
+            hantei = 0
+            while (hantei is not True) and hantei < 100:
                 try:
                     win32gui.ShowWindow(i[0], 5)
                     win32gui.SetForegroundWindow(i[0])
                     hantei = True
                 except:
                     time.sleep(0.1)
+                    hantei += 1
             break
 
 
@@ -54,14 +59,18 @@ def dict_window(text1_, text2_, position):
     pygame.display.set_caption("quick_dict")
     font = pygame.font.Font("font\SourceHanSansJP-Medium.otf", 20)
     text1 = font.render(text1_, True, (5, 5, 5))
-    text2 = font.render(text2_, True, (5, 5, 5))
-    screen = pygame.display.set_mode((400, 100), pygame.NOFRAME)
+    splitted = split_by_length(text2_, 20)
+    text2 = []
+    for i in splitted:
+        text2.append(font.render(i, True, (5, 5, 5)))
+    screen = pygame.display.set_mode((400, 75 + 30 * len(splitted)), pygame.NOFRAME)
     front("quick_dict")
     quited = None
     while quited is None:
-        screen.fill((255, 255, 255))
+        screen.fill((250, 250, 250))
         screen.blit(text1, (10, 10))
-        screen.blit(text2, (10, 60))
+        for i, value in enumerate(text2):
+            screen.blit(value, (10, 60 + 30 * i))
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 pygame.quit()
@@ -84,8 +93,9 @@ def dict_window(text1_, text2_, position):
 
 searchObj = Search()
 while True:
-    if keyboard.is_pressed("ctrl+c+left"):
+    if keyboard.is_pressed("ctrl+c+shift"):
         clipboard = pyperclip.paste()
         print(clipboard)
         answer = searchObj.search(clipboard)
         dict_window(clipboard, answer, pyautogui.position())
+    time.sleep(0.05)
