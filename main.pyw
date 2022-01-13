@@ -7,6 +7,8 @@ import win32gui
 import win32con
 import pyautogui
 import math
+import json
+import winreg
 
 
 class Search:
@@ -30,6 +32,20 @@ class Search:
 
 def split_by_length(txt, length):
     return [txt[i * length:(i + 1) * length] for i in range(math.ceil(len(txt) / length))]
+
+
+def setup():
+    os.chdir(os.path.join(__file__, os.pardir))
+    with open("setting.json", "r") as f:
+        data = json.load(f)
+    if data["first"]:
+        data["first"] = False
+        path = r"Software\Microsoft\Windows\CurrentVersion\Run"
+        with winreg.CreateKey(winreg.HKEY_CURRENT_USER, path) as key:
+            winreg.SetValueEx(key, "Quick Dict", 0, winreg.REG_SZ, __file__)
+
+    with open("setting.json", "w") as f:
+        json.dump(data, f)
 
 
 def windowEnumerationHandler(hwnd, windows):
@@ -61,19 +77,19 @@ def dict_window(text1_, text2_, position):
     font1 = pygame.font.Font("font\SourceHanSansJP-Medium.otf", 18)
     font2 = pygame.font.Font("font\SourceHanSansJP-Medium.otf", 14)
     text1 = font1.render(text1_, True, (250, 250, 250))
-    splitted = split_by_length(text2_, 30)
+    splitted = split_by_length(text2_, 24)
     text2 = []
     for i in splitted:
         text2.append(font2.render(i, True, (20, 20, 20)))
-    screen = pygame.display.set_mode((400, 75 + 20 * len(splitted)), pygame.NOFRAME)
+    screen = pygame.display.set_mode((300, 53 + 20 * len(splitted)), pygame.NOFRAME)
     front("quick_dict")
     quited = None
     while quited is None:
         screen.fill((250, 250, 250))
-        screen.fill((60, 60, 60), (0, 0, 400, 40))
-        screen.blit(text1, (10, 10))
+        screen.fill((60, 60, 60), (0, 0, 300, 30))
+        screen.blit(text1, (10, 2))
         for i, value in enumerate(text2):
-            screen.blit(value, (10, 60 + 20 * i))
+            screen.blit(value, (10, 40 + 20 * i))
         for event in pygame.event.get():
             pass
         try:
@@ -92,6 +108,7 @@ def dict_window(text1_, text2_, position):
             pygame.display.update()
 
 
+setup()
 searchObj = Search()
 while True:
     if keyboard.is_pressed("ctrl+c+shift"):
